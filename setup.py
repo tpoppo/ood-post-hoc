@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='ood-post-hoc',
-    version='',
+    version='0.0.1',
     packages=['ood_detector', 'ood_detector.utils', 'ood_detector.detectors'],
     url='',
     license='',

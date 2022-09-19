@@ -18,6 +18,15 @@ def get_batch_gradient(model, loss_object, x, y_true=None):
 
 
 def get_gradient(model, loss_object, x, batch_size, y_true=None):
+    """
+    Get the gradient of the model with respect to the input using the given loss function.
+    :param model: the TensorFlow model
+    :param loss_object: a python function for the loss. It must be loss(y) or loss(y_true, y_pred)
+    :param x: input data
+    :param batch_size: batch size
+    :param y_true: y_true if the loss wants loss(y_true, y_pred), otherwise is None.
+    :return: The gradient of the model
+    """
     grads = []
     pos = 0
     while pos < len(x):
@@ -31,6 +40,13 @@ def get_gradient(model, loss_object, x, batch_size, y_true=None):
 
 
 def evaluate_aucroc(detector, x_id, x_ood):
+    """
+    It returns the aucroc of the detector
+    :param detector: Detector class
+    :param x_id: in distribution data
+    :param x_ood:  out of distribution data
+    :return: auc roc score
+    """
     score_id = detector.predict(x_id)
     score_ood = detector.predict(x_ood)
     y_pred = np.array([1] * len(score_id) + [0] * len(score_ood))
@@ -39,6 +55,14 @@ def evaluate_aucroc(detector, x_id, x_ood):
 
 
 def evaluate_fpr_at_95_tpr(detector, x_id, x_ood):
+    """
+    It returns the false positive ratio at 95 true positive ratio of the detector
+    :param detector: Detector class
+    :param x_id: in distribution data
+    :param x_ood:  out of distribution data
+    :return: fpr at 95 tpr score
+    """
+
     score_id = detector.predict(x_id)
     score_ood = detector.predict(x_ood)
     y_pred = np.array([1] * len(score_id) + [0] * len(score_ood))

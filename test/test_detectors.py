@@ -21,7 +21,7 @@ def evaluate_detector(self, detector):
 class TestImageNetGaussianEfficientNetB0(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(TestImageNetGaussianEfficientNetB0, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.model = tf.keras.applications.EfficientNetB0()
 
@@ -37,22 +37,38 @@ class TestImageNetGaussianEfficientNetB0(unittest.TestCase):
         self.x_id = np.concatenate([a.numpy() for a in ds_id], axis=0)
 
     def test_msp(self):
+        """
+        Test for the MSPDetector class
+        """
         detector = detectors.MSPDetector(self.model, args_predict={'batch_size': BATCH_SIZE})
         evaluate_detector(self, detector)
 
     def test_energy(self):
+        """
+        Test for the EnergyDetector class
+        """
+
         detector = detectors.EnergyDetector(self.model, args_predict={'batch_size': BATCH_SIZE})
         evaluate_detector(self, detector)
 
     def test_odin(self):
+        """
+        Test for the OdinDetector class
+        """
         detector = detectors.OdinDetector(self.model, args_predict={'batch_size': BATCH_SIZE})
         evaluate_detector(self, detector)
 
     def test_react_msp(self):
+        """
+        Test for the ReactMSPDetector class
+        """
         detector = detectors.ReactMSPDetector(self.model, self.x_id, args_predict={'batch_size': BATCH_SIZE})
         evaluate_detector(self, detector)
 
     def test_react_odin(self):
+        """
+        Test for the ReactOdinDetector class
+        """
         detector = detectors.ReactOdinDetector(self.model, self.x_id, args_predict={'batch_size': BATCH_SIZE})
         evaluate_detector(self, detector)
 

@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 
 
 class Detector(ABC):
+    """
+    Abstract class for a generic detector
+    """
 
     def __init__(self, model, args_predict=None):
         if args_predict is None:

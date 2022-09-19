@@ -3,6 +3,18 @@
 A TensorFlow implementation of various post hoc OOD detectors. All the methods should be compatible with the vast
 majority of TensorFlow models.
 
+## Usage
+```python
+import tensorflow as tf
+from ood_detector.detectors import MSPDetector
+
+model = tf.keras.applications.EfficientNetB0()
+detector = MSPDetector(model)
+ood_score = detector.predict(x_imgs)
+```
+
+
+
 ## Methods
 
 ### MSP score [[1]](https://arxiv.org/abs/1610.02136)

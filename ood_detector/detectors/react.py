@@ -7,19 +7,39 @@ from ood_detector.detectors.odin import OdinDetector
 
 
 class ReactMSPDetector(MSPDetector):
-    def __init__(self, model, x_id, p=0.9, *args, **kwargs):
+    """
+    The ReactMSPDetector class implements [1] using the scoring function from [2]
+
+    [1] Y. Sun, C. Guo, and Y. Li. React: Out-of-distribution detection with rectified activations, 2021
+    [2] Hendrycks and K. Gimpel. A baseline for detecting misclassified and out-of-distribution examples in neural networks, 2016
+    """
+    def __init__(self, model, x_id, *args, p=0.9, **kwargs):
         model = get_react_model(x_id, model, p=p)
         super().__init__(model, *args, **kwargs)
 
 
 class ReactOdinDetector(OdinDetector):
-    def __init__(self, model, x_id, p=0.9, *args, **kwargs):
+    """
+    The ReactOdinDetector class implements [1] using the scoring function from [2]
+
+    [1] Y. Sun, C. Guo, and Y. Li. React: Out-of-distribution detection with rectified activations, 2021
+    [2] S. Liang, Y. Li, and R. Srikant. Enhancing the reliability of out-of-distribution image detection in neural networks, 2017
+    """
+
+    def __init__(self, model, x_id, *args, p=0.9, **kwargs):
         model = get_react_model(x_id, model, p=p)
         super().__init__(model, *args, **kwargs)
 
 
 class ReactEnergyDetector(EnergyDetector):
-    def __init__(self, model, x_id, p=0.9, *args, **kwargs):
+    """
+    The ReactEnergyDetector class implements [1] using the scoring function from [2]
+
+    [1] Y. Sun, C. Guo, and Y. Li. React: Out-of-distribution detection with rectified activations, 2021
+    [2] W. Liu, X. Wang, J. D. Owens, and Y. Li. Energy-based out-of-distribution detection, 2020
+    """
+
+    def __init__(self, model, x_id, *args, p=0.9, **kwargs):
         model = get_react_model(x_id, model, p=p)
         super().__init__(model, *args, **kwargs)
 
@@ -36,9 +56,9 @@ def get_react_model(x_id, model_base, p=0.9, show_info=False):
     model_fv = tf.keras.Sequential([model_fv, tf.keras.layers.Flatten()])
     y = model_fv.predict(x_id).flatten()
     y_pos = min(int(p * len(y)), len(y) - 1)
-    λ = np.partition(y, pos, axis=0)[y_pos]
+    lambda_val = np.partition(y, pos, axis=0)[y_pos]
     if show_info:
-        print(f'λ: {λ}')
+        print(f'lambda_val: {lambda_val}')
 
     inp = tf.keras.layers.Input(shape=model_fv.output.shape[1:])
     x = inp
@@ -60,7 +80,7 @@ def get_react_model(x_id, model_base, p=0.9, show_info=False):
     # feature vector
     model_react = tf.keras.Sequential([
         model_fv,
-        ReAct(λ),
+        ReAct(lambda_val),
         last_block
     ])
 
@@ -69,12 +89,17 @@ def get_react_model(x_id, model_base, p=0.9, show_info=False):
 
 
 class ReAct(tf.keras.layers.Layer):
-    def __init__(self, λ):
-        super(ReAct, self).__init__()
-        self.λ = λ
+    """
+    The ReAct class implements the ReAct layer from [1]
+
+    [1] Y. Sun, C. Guo, and Y. Li. React: Out-of-distribution detection with rectified activations, 2021
+    """
+    def __init__(self, lambda_val):
+        super().__init__()
+        self.lambda_val = lambda_val
 
     def build(self, input_shape):
         pass
 
     def call(self, inputs):
-        return tf.math.minimum(inputs, self.λ)
+        return tf.math.minimum(inputs, self.lambda_val)
