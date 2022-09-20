@@ -1,4 +1,5 @@
 # OOD post hoc methods
+[![codecov](https://codecov.io/github/tpoppo/ood-post-hoc/branch/main/graph/badge.svg?token=3ORB55GD6O)](https://codecov.io/github/tpoppo/ood-post-hoc)
 
 A TensorFlow implementation of various post hoc OOD detectors. All the methods should be compatible with the vast
 majority of TensorFlow models.
