@@ -31,7 +31,7 @@ jobs:
       run: |
         pip install coverage
         coverage run -m unittest
-        coverage xml
+        coverage xml -i
         ls -hal
     
     - name: Upload Coverage to Codecov
