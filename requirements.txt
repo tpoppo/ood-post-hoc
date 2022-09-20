@@ -3,3 +3,4 @@ tensorflow
 setuptools==59.6.0
 scipy~=1.5.4
 tensorflow_datasets
+ood_metrics
