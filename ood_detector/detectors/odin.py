@@ -7,7 +7,6 @@ from ..utils.utils import get_gradient
 
 
 class OdinDetector(Detector):
-
     def __init__(self, model, epsilon=0.0034, temperature=1000, args_predict=None):
         super().__init__(model, args_predict)
         self.epsilon = epsilon
@@ -17,9 +16,15 @@ class OdinDetector(Detector):
         args_predict = self.args_predict.copy()
         args_predict.update(kwargs)
 
-        batch_size = args_predict.get('batch_size', 32)
+        batch_size = args_predict.get("batch_size", 32)
 
-        x = odin_perturbation(self.model, x, temperature=self.temperature, epsilon=self.epsilon, batch_size=batch_size)
+        x = odin_perturbation(
+            self.model,
+            x,
+            temperature=self.temperature,
+            epsilon=self.epsilon,
+            batch_size=batch_size,
+        )
         y_pred = self.model.predict(x, **args_predict) / self.temperature
         y_pred = scipy.special.softmax(y_pred, axis=0)
         y_pred = np.max(y_pred, axis=1)

@@ -13,6 +13,7 @@ class ReactMSPDetector(MSPDetector):
     [1] Y. Sun, C. Guo, and Y. Li. React: Out-of-distribution detection with rectified activations, 2021
     [2] Hendrycks and K. Gimpel. A baseline for detecting misclassified and out-of-distribution examples in neural networks, 2016
     """
+
     def __init__(self, model, x_id, *args, p=0.9, **kwargs):
         model = get_react_model(x_id, model, p=p)
         super().__init__(model, *args, **kwargs)
@@ -58,7 +59,7 @@ def get_react_model(x_id, model_base, p=0.9, show_info=False):
     y_pos = min(int(p * len(y)), len(y) - 1)
     lambda_val = np.partition(y, pos, axis=0)[y_pos]
     if show_info:
-        print(f'lambda_val: {lambda_val}')
+        print(f"lambda_val: {lambda_val}")
 
     inp = tf.keras.layers.Input(shape=model_fv.output.shape[1:])
     x = inp
@@ -68,23 +69,19 @@ def get_react_model(x_id, model_base, p=0.9, show_info=False):
             if layer.activation == tf.keras.activations.softmax:
                 layer.activation = tf.keras.activations.linear
                 if show_info:
-                    print('softmax layer removed')
+                    print("softmax layer removed")
         except Exception as e:
             if show_info:
                 print(e)
         x = layer(x)
 
     last_block = tf.keras.Model(inputs=inp, outputs=x)
-    last_block.compile('adam')
+    last_block.compile("adam")
 
     # feature vector
-    model_react = tf.keras.Sequential([
-        model_fv,
-        ReAct(lambda_val),
-        last_block
-    ])
+    model_react = tf.keras.Sequential([model_fv, ReAct(lambda_val), last_block])
 
-    model_react.compile('adam')
+    model_react.compile("adam")
     return model_react
 
 
@@ -94,6 +91,7 @@ class ReAct(tf.keras.layers.Layer):
 
     [1] Y. Sun, C. Guo, and Y. Li. React: Out-of-distribution detection with rectified activations, 2021
     """
+
     def __init__(self, lambda_val):
         super().__init__()
         self.lambda_val = lambda_val
